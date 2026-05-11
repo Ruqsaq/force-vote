@@ -1,0 +1,25 @@
+# Files Cloudflare should NOT upload to the static-asset CDN.
+# Same syntax as .gitignore.
+
+# Git internals — public repo means these don't *leak* anything, but no reason
+# to serve them; they bloat the deploy and let strangers reconstruct the repo
+# from the deployed URL alone.
+.git/
+.gitignore
+.gitattributes
+
+# Editor / dev tooling
+.claude/
+.DS_Store
+
+# Build scripts run locally (or in a future scheduled job) — they're not part
+# of the served site.
+build-candidates.js
+build-zip-lookup.js
+
+# Wrangler auto-generated artifacts (regenerated each deploy)
+wrangler.jsonc
+.wrangler/
+
+# Asset-side ignore file itself — no need to expose it
+.assetsignore
