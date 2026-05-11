@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Node (future-proof for when build scripts gain deps)
+node_modules/
+npm-debug.log*
+
+# Local env / secrets (FEC_API_KEY etc — never commit)
+.env
+.env.local
+.env.*.local
+
+# Editor scratch
+*.swp

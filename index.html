@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force the Vote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #3e3740;
+            --bg-elevated: #4a424d;
+            --text: #f4ede4;
+            --text-muted: #a89fa3;
+            --accent: #f4b942;
+            --accent-hover: #ffc961;
+            --signed: #6ba368;
+            --declined: #c2503e;
+            --pending: #8e8590;
+            --content-width: 720px;
+            --max-width: 1100px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 800;
+            line-height: 1.05;
+            margin: 0 0 0.5em;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 5.5rem); }
+        h2 { font-size: clamp(2rem, 4.5vw, 3rem); }
+        h3 { font-size: 1.5rem; line-height: 1.2; }
+
+        p { margin: 0 0 1.2em; }
+
+        a { color: var(--accent); }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.45;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(62, 55, 64, 0.35) 0%,
+                rgba(62, 55, 64, 0.55) 50%,
+                rgba(62, 55, 64, 0.85) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 2;
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: 5rem 1.5rem 4rem;
+            text-align: center;
+        }
+
+        .hero-text h1 {
+            margin-bottom: 0.4em;
+            white-space: nowrap;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-text .tagline {
+            font-size: 1.35rem;
+            color: var(--text);
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.4;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta-wrap {
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem 2rem;
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.125);
+            padding-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Bitter', Georgia, serif;
+            font-size: clamp(2.25rem, 5vw, 3.25rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-number.stat-alarm {
+            color: var(--declined);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .stat-source {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.95rem 1.8rem;
+            border: 1px solid var(--accent);
+            border-radius: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            letter-spacing: 0.01em;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border-color: var(--text-muted);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text);
+        }
+
+        .section {
+            padding: 5rem 1.5rem;
+        }
+
+        .section-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .container {
+            max-width: var(--content-width);
+            margin: 0 auto;
+        }
+
+        .container-wide {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pledge-card {
+            background: var(--bg-elevated);
+            padding: 2.5rem;
+            border-left: 4px solid var(--accent);
+            margin: 2.5rem 0;
+        }
+
+        .pledge-card h3 {
+            margin-top: 2rem;
+        }
+
+        .pledge-card h3:first-child {
+            margin-top: 0;
+        }
+
+        .pledge-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0.35rem 0.7rem;
+            border-radius: 2px;
+        }
+
+        .status-signed { background: var(--signed); color: var(--bg); }
+        .status-declined { background: var(--declined); color: var(--text); }
+        .status-pending { background: var(--pending); color: var(--bg); }
+        .status-broken { background: var(--declined); color: var(--text); }
+
+        .how-steps {
+            margin: 3rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2.75rem;
+        }
+
+        .how-step {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1.75rem;
+            align-items: start;
+        }
+
+        .how-step-num {
+            font-family: 'Bitter', Georgia, serif;
+            font-size: clamp(3rem, 5vw, 4rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            letter-spacing: -0.04em;
+            min-width: 3.5rem;
+        }
+
+        .how-step h3 {
+            margin-top: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .how-step p {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .how-step {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+
+        .leverage-meter {
+            background: var(--bg-elevated);
+            padding: 2.75rem 2.5rem;
+            border-left: 4px solid var(--accent);
+            margin: 3.5rem 0;
+            text-align: center;
+        }
+
+        .leverage-meter .eyebrow {
+            margin-bottom: 1rem;
+        }
+
+        .leverage-meter-num {
+            font-family: 'Bitter', Georgia, serif;
+            font-size: clamp(3rem, 7vw, 4.5rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .leverage-meter-num .leverage-total {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .leverage-meter-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 1.75rem;
+        }
+
+        .leverage-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .leverage-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.4s ease;
+        }
+
+        .leverage-meter-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 1.5rem auto 0;
+            line-height: 1.55;
+        }
+
+        .accountability {
+            margin-top: 3rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .accountability h3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .accountability p {
+            margin-bottom: 0;
+        }
+
+        .tracker-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--signed);
+            box-shadow: 0 0 0 0 rgba(107, 163, 104, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(107, 163, 104, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(107, 163, 104, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(107, 163, 104, 0); }
+        }
+
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-top: 2.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .tracker-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .tracker-grid { grid-template-columns: 1fr; }
+        }
+
+        .tracker-stat {
+            background: var(--bg-elevated);
+            padding: 2rem;
+            border-top: 3px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tracker-stat-highlight {
+            border-top-color: var(--accent);
+        }
+
+        .tracker-stat-shame {
+            border-top-color: var(--declined);
+        }
+
+        .tracker-stat-signed {
+            border-top-color: var(--signed);
+        }
+
+        .map-controls {
+            display: flex;
+            align-items: flex-start;
+            margin: 2.5rem 0 0;
+            min-height: 2.75rem;
+            gap: 1.5rem 2rem;
+            flex-wrap: wrap;
+        }
+
+        .zip-lookup {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 0;
+        }
+        .zip-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .zip-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+        #zip-input {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.55rem 0.7rem;
+            width: 7rem;
+            letter-spacing: 0.04em;
+            border-radius: 2px;
+        }
+        #zip-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .zip-btn {
+            background: var(--accent);
+            color: #2a232c;
+            border: 0;
+            padding: 0 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: filter 0.15s ease;
+        }
+        .zip-btn:hover { filter: brightness(1.1); }
+        .zip-message {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .zip-message.is-error { color: #c2503e; }
+        .zip-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-top: 0.3rem;
+        }
+        .zip-option {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            padding: 0.45rem 0.7rem;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        .zip-option:hover {
+            border-color: var(--accent);
+            background: rgba(244, 185, 66, 0.08);
+        }
+
+        .map-breadcrumbs {
+            font-family: 'Bitter', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .crumb-root,
+        .crumb-state-wrap {
+            position: relative;
+            transition: color 0.15s ease;
+        }
+
+        .crumb-state-wrap {
+            color: var(--accent);
+        }
+
+        .crumb-root.is-clickable,
+        .crumb-state-wrap.is-clickable {
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .crumb-root.is-clickable:hover,
+        .crumb-state-wrap.is-clickable:hover {
+            color: var(--accent);
+        }
+
+        .crumb-root.is-clickable:hover .crumb-back-hint,
+        .crumb-state-wrap.is-clickable:hover .crumb-back-hint {
+            color: var(--accent);
+        }
+
+        .crumb-back-hint {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.25rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            transition: color 0.15s ease;
+        }
+
+        .crumb-back-hint[hidden] {
+            display: none;
+        }
+
+        .crumb-sep {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin: 0 0.4em;
+        }
+
+        .crumb-current {
+            color: var(--accent);
+        }
+
+        .map-container {
+            background: transparent;
+            padding: 0 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #us-map {
+            width: 100%;
+            aspect-ratio: 975 / 610;
+            display: block;
+        }
+
+        .map-stats-panel {
+            position: absolute;
+            top: 11%;
+            right: 1.5rem;
+            bottom: 11%;
+            width: 20%;
+            background: var(--bg-elevated);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            overflow-y: auto;
+            pointer-events: none;
+            transition: width 0.75s ease;
+        }
+
+        .map-container.is-district-view .map-stats-panel {
+            width: 40%;
+        }
+
+        .stats-header {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            line-height: 1.2;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: -0.01em;
+        }
+
+        .stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .stat-row-num {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--accent);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-row-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        /* District view: hide the stats-list, show the candidate-list + 4-stat header.
+           Candidate view stacks on top of district view: also hide the list and
+           stats header, show the detail panel instead. */
+        .map-container.is-district-view #stats-list { display: none; }
+        .map-container:not(.is-district-view) #candidate-list { display: none; }
+        .map-container.is-district-view #district-stats { display: grid; }
+        .map-container:not(.is-district-view) #district-stats { display: none; }
+
+        .map-container.is-candidate-view #candidate-list { display: none; }
+        .map-container.is-candidate-view #district-stats { display: none; }
+        .map-container.is-candidate-view #candidate-detail { display: flex; }
+        .map-container:not(.is-candidate-view) #candidate-detail { display: none; }
+
+        /* Picker lists are hidden by default — only the mobile media query at the
+           bottom of this stylesheet reveals them. Keeping the layout properties
+           here so they apply once shown. */
+        .picker-list {
+            display: none;
+            flex-direction: column;
+            gap: 0.45rem;
+            margin-top: 1rem;
+            pointer-events: auto;
+        }
+        .picker-incumbent {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+            font-weight: 500;
+        }
+
+        /* Collapsible state list — only the "United States +" toggle is visible
+           until tapped. Toggle row gets slightly more weight than ordinary rows. */
+        #mobile-state-list:not(.is-expanded) .picker-row:not(.picker-toggle) {
+            display: none;
+        }
+        .picker-toggle {
+            border-left-color: var(--accent);
+        }
+        .picker-toggle .picker-name {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .picker-toggle .toggle-icon {
+            font-size: 1.4rem;
+            line-height: 1;
+            font-weight: 400;
+            opacity: 1;
+            min-width: 1ch;
+            text-align: center;
+        }
+        .picker-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 0.9rem;
+            background: rgba(0, 0, 0, 0.18);
+            border-left: 3px solid rgba(244, 185, 66, 0.25);
+            cursor: pointer;
+            transition: background 0.15s ease, border-left-color 0.15s ease;
+        }
+        .picker-row:hover,
+        .picker-row:active {
+            background: rgba(244, 185, 66, 0.08);
+            border-left-color: var(--accent);
+        }
+        .picker-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+            flex: 1;
+            min-width: 0;
+        }
+        .picker-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .picker-chevron {
+            color: var(--accent);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .district-stats {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .district-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            min-width: 0;
+        }
+        .district-stat-num {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--accent);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        .district-stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.52rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .candidate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            pointer-events: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(244, 185, 66, 0.4) transparent;
+        }
+        .candidate-list::-webkit-scrollbar { width: 6px; }
+        .candidate-list::-webkit-scrollbar-thumb {
+            background: rgba(244, 185, 66, 0.4);
+            border-radius: 3px;
+        }
+
+        .candidate-row {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.55rem 0.7rem;
+            background: rgba(0, 0, 0, 0.18);
+            border-left: 3px solid #8e8590;
+        }
+
+        .candidate-row.is-incumbent {
+            border-left-color: var(--accent);
+        }
+
+        .candidate-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--text);
+            flex: 1;
+            min-width: 0;
+            line-height: 1.25;
+        }
+
+        .candidate-incumbent-badge {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-left: 0.3rem;
+        }
+
+        .candidate-party {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 2px;
+            min-width: 1.3rem;
+            text-align: center;
+            color: #fff;
+        }
+        .candidate-party.party-DEM { background: #3a7bd5; }
+        .candidate-party.party-REP { background: #c2503e; }
+        .candidate-party.party-IND,
+        .candidate-party.party-LIB,
+        .candidate-party.party-GRE,
+        .candidate-party.party-other { background: #8e8590; }
+
+        .candidate-status {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8e8590;
+            white-space: nowrap;
+        }
+
+        .candidate-row {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .candidate-row:hover {
+            background: rgba(244, 185, 66, 0.08);
+        }
+
+        /* Candidate detail panel. */
+        .candidate-detail {
+            flex-direction: column;
+            gap: 1rem;
+            pointer-events: auto;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        .cd-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .cd-name {
+            font-family: 'Bitter', Georgia, serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text);
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        .cd-badge-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .cd-incumbent {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            background: rgba(244, 185, 66, 0.12);
+            padding: 0.2rem 0.45rem;
+            border-radius: 2px;
+        }
+        .cd-status {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8e8590;
+        }
+        .cd-mini-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+            padding-bottom: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cd-fields {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .cd-field { margin: 0; }
+        .cd-field dt {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .cd-field dd {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text);
+        }
+        .cd-field dd a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(244, 185, 66, 0.4);
+        }
+        .cd-field dd a:hover {
+            border-bottom-style: solid;
+        }
+        .cd-back-btn {
+            margin-top: auto;
+            background: var(--accent);
+            color: #2a232c;
+            border: 0;
+            padding: 0.7rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: filter 0.15s ease;
+        }
+        .cd-back-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .state {
+            fill: #7a7180;
+            stroke: rgba(255, 255, 255, 0.25);
+            stroke-width: 0.75;
+            transition: fill 0.2s ease, opacity 0.6s ease;
+            cursor: pointer;
+        }
+
+        .state:hover {
+            fill: rgba(244, 185, 66, 0.35);
+        }
+
+        .state.faded {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .states-layer {
+            transition: opacity 0.6s ease;
+        }
+
+        .district {
+            fill: #8e8590;
+            stroke: var(--bg);
+            stroke-width: 1.2;
+            cursor: pointer;
+            transition: fill 0.2s ease, opacity 0.4s ease;
+        }
+
+        .district:hover {
+            fill: var(--accent);
+        }
+
+        .district.faded {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .map-loading {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4rem 2rem;
+            font-size: 0.95rem;
+        }
+
+        .map-legend {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            margin-top: 1.25rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .map-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .map-legend-swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .tracker-num {
+            font-family: 'Bitter', Georgia, serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.02em;
+        }
+
+        .tracker-num .tracker-total {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .tracker-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .tracker-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .tracker-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.6s ease;
+        }
+
+        .tracker-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            margin-top: auto;
+        }
+
+        .tracker-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .tracker-footer strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .site-footer {
+            padding: 2rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem 2rem;
+        }
+
+        .site-footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .site-footer a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .lede {
+            font-size: 1.2rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            body { font-size: 17px; }
+            .section { padding: 3.5rem 1.25rem; }
+            .hero-text { padding: 3rem 1.25rem 2rem; }
+            .pledge-card { padding: 1.75rem; }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem 1.5rem;
+            }
+        }
+
+        /* Mobile (<= 640px): no map. The panel becomes the page; state and district
+           pickers replace map-clicking. Picker rows dispatch to the hidden SVG
+           paths so all the existing morph/load logic still runs. Placed last so
+           these rules win over earlier same-specificity declarations. */
+        @media (max-width: 640px) {
+            #us-map,
+            .map-legend {
+                display: none;
+            }
+            .map-container {
+                padding: 0;
+            }
+            .map-stats-panel {
+                position: static;
+                width: 100% !important;
+                max-height: none;
+                bottom: auto;
+                top: auto;
+                right: auto;
+                padding: 1.25rem;
+                pointer-events: auto;
+            }
+            .map-container[data-view="us"] #mobile-state-list,
+            .map-container[data-view="state"] #mobile-district-list {
+                display: flex;
+            }
+            /* Stack breadcrumb crumbs one per line: insert a line break after
+               each visible separator. Hints are absolute-positioned and would
+               overlap stacked lines, so hide them on mobile too. */
+            .map-breadcrumbs {
+                white-space: pre-line;
+                line-height: 1.5;
+            }
+            .crumb-sep::after {
+                content: "\A";
+            }
+            .crumb-back-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <img src="Image.png" alt="Citizens standing in front of the U.S. Capitol" class="hero-image">
+        <div class="hero-overlay"></div>
+        <div class="hero-text">
+        <h1>Force the Vote!</h1>
+
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-number stat-alarm">83%</div>
+                <div class="stat-label">
+                    Disapprove of Congress
+                    <span class="stat-source">Gallup, 2024</span>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">87%</div>
+                <div class="stat-label">
+                    Support Term Limits
+                    <span class="stat-source">Pew Research, 2023</span>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">74%</div>
+                <div class="stat-label">
+                    Support a Balanced Budget Amendment
+                    <span class="stat-source">ABC News / Washington Post</span>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">86%</div>
+                <div class="stat-label">
+                    Support a Stock Trading Ban
+                    <span class="stat-source">U. of Maryland, 2023</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="tagline">Three reforms America already agrees on. One vote that puts them on the floor.</p>
+        </div>
+    </section>
+
+    <div class="hero-cta-wrap">
+        <div class="hero-cta">
+            <a href="#lookup" class="btn">Find My Representative</a>
+            <a href="#pledge" class="btn btn-secondary">Read the Pledge</a>
+            <a href="#how" class="btn btn-secondary">How it works</a>
+        </div>
+    </div>
+
+    <section class="section section-divider" id="tracker">
+        <div class="container-wide">
+            <div class="eyebrow tracker-eyebrow"><span class="live-dot"></span> Live Tracker</div>
+            <h2>The fight in real time.</h2>
+
+            <div class="tracker-grid">
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        <span class="tracker-current">0</span>
+                    </div>
+                    <div class="tracker-label">Candidates Signed</div>
+                    <div class="tracker-sub">Includes incumbents and challengers.</div>
+                </div>
+
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        <span class="tracker-current">0</span><span class="tracker-total"> / 435</span>
+                    </div>
+                    <div class="tracker-label">Incumbents Signed</div>
+                    <div class="tracker-bar">
+                        <div class="tracker-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="tracker-sub">Sitting members of the U.S. House.</div>
+                </div>
+
+                <div class="tracker-stat tracker-stat-highlight">
+                    <div class="tracker-num">
+                        <span class="tracker-current">0</span><span class="tracker-total"> / 15</span>
+                    </div>
+                    <div class="tracker-label">Needed for Leverage</div>
+                    <div class="tracker-bar">
+                        <div class="tracker-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="tracker-sub">Incumbents who've signed.</div>
+                </div>
+
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        $<span class="tracker-current">0</span>
+                    </div>
+                    <div class="tracker-label">Voter Donations Committed</div>
+                    <div class="tracker-sub">Released to candidates when they sign the Pledge.</div>
+                </div>
+
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        <span class="tracker-current">0</span>
+                    </div>
+                    <div class="tracker-label">Voters Backing</div>
+                    <div class="tracker-sub">Unique people who've committed to donate.</div>
+                </div>
+
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        <span class="tracker-current">0</span><span class="tracker-total"> / 435</span>
+                    </div>
+                    <div class="tracker-label">Races Affected</div>
+                    <div class="tracker-bar">
+                        <div class="tracker-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="tracker-sub">Districts with at least one voter donor.</div>
+                </div>
+
+                <div class="tracker-stat">
+                    <div class="tracker-num">
+                        $<span class="tracker-current">0</span>
+                    </div>
+                    <div class="tracker-label">Highest Backed Race</div>
+                    <div class="tracker-sub">Race with the most donations committed.</div>
+                </div>
+
+                <div class="tracker-stat tracker-stat-shame">
+                    <div class="tracker-num">
+                        $<span class="tracker-current">0</span>
+                    </div>
+                    <div class="tracker-label">Highest Backed Candidate</div>
+                    <div class="tracker-sub">Candidate with the most donations committed.</div>
+                </div>
+
+                <div class="tracker-stat tracker-stat-signed">
+                    <div class="tracker-num">
+                        <span class="tracker-current">&mdash;</span>
+                    </div>
+                    <div class="tracker-label">Most Recent Signer</div>
+                    <div class="tracker-sub">Candidate who most recently signed.</div>
+                </div>
+            </div>
+
+            <div class="tracker-footer">
+                Last updated: <strong>Pre-launch &mdash; counters begin at zero.</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-divider" id="map">
+        <div class="container-wide">
+            <div class="eyebrow">The Map</div>
+            <h2>Pressure across the country.</h2>
+            <p class="lede">Click a state to see its districts and candidate status. Heat color shows where backing has gathered.</p>
+
+            <div class="map-controls">
+                <div class="zip-lookup" id="lookup">
+                    <label class="zip-label" for="zip-input">Jump to your district</label>
+                    <div class="zip-row">
+                        <input
+                            id="zip-input"
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="5"
+                            placeholder="ZIP code"
+                            autocomplete="postal-code"
+                            aria-label="ZIP code"
+                        >
+                        <button type="button" id="zip-submit" class="zip-btn">Go</button>
+                    </div>
+                    <div class="zip-message" id="zip-message" hidden></div>
+                    <div class="zip-options" id="zip-options" hidden></div>
+                </div>
+                <nav class="map-breadcrumbs" aria-label="Map navigation"><span id="crumb-root" class="crumb-root">United States<span id="crumb-root-hint" class="crumb-back-hint" hidden>&larr; Back to US map</span></span><span id="crumb-sep-1" class="crumb-sep" hidden>&rsaquo;</span><span id="crumb-state" class="crumb-state-wrap" hidden><span id="crumb-state-name"></span><span id="crumb-state-hint" class="crumb-back-hint" hidden></span></span><span id="crumb-sep-2" class="crumb-sep" hidden>&rsaquo;</span><span id="crumb-district-wrap" class="crumb-state-wrap" hidden><span id="crumb-district"></span><span id="crumb-district-hint" class="crumb-back-hint" hidden></span></span><span id="crumb-sep-3" class="crumb-sep" hidden>&rsaquo;</span><span id="crumb-candidate" class="crumb-current" hidden></span></nav>
+            </div>
+
+            <div class="map-container">
+                <svg id="us-map" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet"></svg>
+                <div class="map-stats-panel" id="map-stats-panel">
+                    <div class="stats-header" id="stats-header">United States</div>
+                    <div class="stats-list" id="stats-list">
+                        <div class="stat-row">
+                            <div class="stat-row-num" id="stat-candidates">0</div>
+                            <div class="stat-row-label">Candidates</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-row-num" id="stat-races">0</div>
+                            <div class="stat-row-label">Races</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-row-num" id="stat-backers">0</div>
+                            <div class="stat-row-label">Voter Backers</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-row-num" id="stat-money">$0</div>
+                            <div class="stat-row-label">Money Backed</div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-row-num" id="stat-signers">0</div>
+                            <div class="stat-row-label">Signers</div>
+                        </div>
+                    </div>
+                    <div class="district-stats" id="district-stats" hidden>
+                        <div class="district-stat">
+                            <div class="district-stat-num" id="dstat-candidates">0</div>
+                            <div class="district-stat-label">Candidates</div>
+                        </div>
+                        <div class="district-stat">
+                            <div class="district-stat-num" id="dstat-money">$0</div>
+                            <div class="district-stat-label">Backed</div>
+                        </div>
+                        <div class="district-stat">
+                            <div class="district-stat-num" id="dstat-backers">0</div>
+                            <div class="district-stat-label">Backers</div>
+                        </div>
+                        <div class="district-stat">
+                            <div class="district-stat-num" id="dstat-signers">0</div>
+                            <div class="district-stat-label">Signers</div>
+                        </div>
+                    </div>
+                    <div class="picker-list" id="mobile-state-list" hidden></div>
+                    <div class="picker-list" id="mobile-district-list" hidden></div>
+                    <div class="candidate-list" id="candidate-list" hidden></div>
+                    <div class="candidate-detail" id="candidate-detail" hidden>
+                        <div class="cd-header">
+                            <div class="cd-name" id="cd-name"></div>
+                            <div class="cd-badge-row">
+                                <span class="candidate-party" id="cd-party"></span>
+                                <span class="cd-incumbent" id="cd-incumbent" hidden>Incumbent</span>
+                                <span class="cd-status" id="cd-status">No Response</span>
+                            </div>
+                        </div>
+                        <div class="cd-mini-stats">
+                            <div class="district-stat">
+                                <div class="district-stat-num" id="cd-stat-money">$0</div>
+                                <div class="district-stat-label">Backed</div>
+                            </div>
+                            <div class="district-stat">
+                                <div class="district-stat-num" id="cd-stat-backers">0</div>
+                                <div class="district-stat-label">Backers</div>
+                            </div>
+                        </div>
+                        <dl class="cd-fields">
+                            <div class="cd-field">
+                                <dt>District</dt>
+                                <dd id="cd-district"></dd>
+                            </div>
+                            <div class="cd-field">
+                                <dt>Party</dt>
+                                <dd id="cd-party-full"></dd>
+                            </div>
+                            <div class="cd-field">
+                                <dt>First FEC filing</dt>
+                                <dd id="cd-filed"></dd>
+                            </div>
+                            <div class="cd-field">
+                                <dt>FEC committee</dt>
+                                <dd><a id="cd-fec-link" target="_blank" rel="noopener">View on fec.gov</a></dd>
+                            </div>
+                            <div class="cd-field" id="cd-bio-field" hidden>
+                                <dt>Congress.gov bio</dt>
+                                <dd><a id="cd-bio-link" target="_blank" rel="noopener">Member page</a></dd>
+                            </div>
+                        </dl>
+                        <button type="button" class="cd-back-btn" id="cd-back-btn">Back this candidate</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-legend">
+                <span class="map-legend-item"><span class="map-legend-swatch" style="background:#7a7180;"></span> No data</span>
+                <span class="map-legend-item"><span class="map-legend-swatch" style="background:rgba(244,185,66,0.4);"></span> Some backing</span>
+                <span class="map-legend-item"><span class="map-legend-swatch" style="background:#f4b942;"></span> Heavy backing</span>
+                <span class="map-legend-item"><span class="map-legend-swatch" style="background:#6ba368;"></span> Signer in district</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-divider" id="pledge">
+        <div class="container">
+            <div class="eyebrow">The Pledge</div>
+            <h2>Three reforms. One vote.</h2>
+            <p class="lede">We're asking every candidate for the U.S. House to publicly commit, in writing, to withhold their vote for Speaker until three long-overdue reforms get an immediate yes/no floor vote.</p>
+
+            <div class="pledge-card">
+                <h3>Term Limits</h3>
+                <p>Three terms maximum for House members. Two for Senate.</p>
+
+                <h3>Balanced Budget Amendment</h3>
+                <p>A balanced federal budget, except in declared wars or national emergencies.</p>
+
+                <h3>Congressional Stock Trading Ban</h3>
+                <p>No member of Congress &mdash; or their immediate family &mdash; trades individual stocks while in office.</p>
+            </div>
+
+            <p>None of these are radical. All three poll above 70% across party lines. They've been blocked for decades because the people who'd have to pass them are the people they'd constrain. The Speaker vote is the leverage that breaks that.</p>
+
+            <p style="margin-top: 2rem;">
+                <span class="status-badge status-signed">Signed</span>
+                <span class="status-badge status-pending" style="margin-left: 0.5rem;">No Response</span>
+                <span class="status-badge status-declined" style="margin-left: 0.5rem;">Declined</span>
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Status badges &mdash; how each candidate will appear on the map and lookup tool.</p>
+        </div>
+    </section>
+
+    <section class="section section-divider" id="how">
+        <div class="container">
+            <div class="eyebrow">How it works</div>
+            <h2>The leverage is real. The mechanic is proven.</h2>
+            <p class="lede">Every two years, the House elects a Speaker. In a narrow majority, even a small bloc has full power to set the terms. We're using that power for one thing.</p>
+
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-step-num">1</div>
+                    <div>
+                        <h3>The Speaker needs 218 votes.</h3>
+                        <p>The first vote of every new Congress is the Speaker election. No Speaker, no committees, no legislation, no business. Nothing else moves until that vote is settled.</p>
+                    </div>
+                </div>
+
+                <div class="how-step">
+                    <div class="how-step-num">2</div>
+                    <div>
+                        <h3>A small bloc can deny it.</h3>
+                        <p>In January 2023, twenty holdouts forced fifteen ballots and major rule concessions before Kevin McCarthy got the gavel. The Freedom Caucus pulled the same lever in 2015. The mechanic is proven &mdash; we're just pointing it at three popular reforms instead of internal party fights.</p>
+                    </div>
+                </div>
+
+                <div class="how-step">
+                    <div class="how-step-num">3</div>
+                    <div>
+                        <h3>Signed members force a floor vote.</h3>
+                        <p>Signed candidates withhold their Speaker vote until a Speaker publicly commits to an immediate yes/no floor vote on all three reforms. Not passage &mdash; just a vote. Every member of Congress goes on record. Voters see exactly who blocks what.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="leverage-meter">
+                <div class="eyebrow">Leverage Threshold</div>
+                <div class="leverage-meter-num">
+                    <span class="leverage-current">0</span><span class="leverage-total"> / 15</span>
+                </div>
+                <div class="leverage-meter-label">Needed for Leverage</div>
+                <div class="leverage-bar">
+                    <div class="leverage-bar-fill" style="width: 0%"></div>
+                </div>
+                <p class="leverage-meter-desc">Once 15 signed incumbents enter the next House majority, no Speaker is elected without committing to the floor vote. The actual threshold depends on the majority's margin.</p>
+            </div>
+
+            <div class="accountability">
+                <h3>What if they break it?</h3>
+                <p>Every signed pledge is a public document. If a signed member votes for Speaker without securing the floor-vote commitment, they get a permanent <span class="status-badge status-broken">Broke Pledge</span> badge on this site, with their signed document published alongside their record.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div>Contact: <a href="mailto:hq@force.vote">hq@force.vote</a></div>
+        <div>&copy; 2026 Force.Vote</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+    <script>
+        console.log("[map] script start. d3:", typeof d3, "topojson:", typeof topojson);
+        (function () {
+            const width = 975;
+            const height = 610;
+
+            if (typeof d3 === "undefined") {
+                document.querySelector(".map-container").innerHTML =
+                    '<div class="map-loading">D3 library failed to load.</div>';
+                return;
+            }
+            if (typeof topojson === "undefined") {
+                document.querySelector(".map-container").innerHTML =
+                    '<div class="map-loading">TopoJSON library failed to load.</div>';
+                return;
+            }
+
+            const svg = d3.select("#us-map");
+            const g = svg.append("g").attr("class", "states-layer");
+            const districtsLayer = svg.append("g").attr("class", "districts-layer");
+            let path = d3.geoPath();
+
+            let activeState = null;
+            let activeDistrict = null;
+
+            // Map of state name → districts file. Add more states as we go.
+            const STATE_DISTRICT_FILES = {
+                "Alabama": "al-districts.json",
+                "Alaska": "ak-districts.json",
+                "Arizona": "az-districts.json",
+                "Arkansas": "ar-districts.json",
+                "California": "ca-districts.json",
+                "Colorado": "co-districts.json",
+                "Connecticut": "ct-districts.json",
+                "Delaware": "de-districts.json",
+                "Florida": "fl-districts.json",
+                "Georgia": "ga-districts.json",
+                "Hawaii": "hi-districts.json",
+                "Idaho": "id-districts.json",
+                "Illinois": "il-districts.json",
+                "Indiana": "in-districts.json",
+                "Iowa": "ia-districts.json",
+                "Kansas": "ks-districts.json",
+                "Kentucky": "ky-districts.json",
+                "Louisiana": "la-districts.json",
+                "Maine": "me-districts.json",
+                "Maryland": "md-districts.json",
+                "Massachusetts": "ma-districts.json",
+                "Michigan": "mi-districts.json",
+                "Minnesota": "mn-districts.json",
+                "Mississippi": "ms-districts.json",
+                "Missouri": "mo-districts.json",
+                "Montana": "mt-districts.json",
+                "Nebraska": "ne-districts.json",
+                "Nevada": "nv-districts.json",
+                "New Hampshire": "nh-districts.json",
+                "New Jersey": "nj-districts.json",
+                "New Mexico": "nm-districts.json",
+                "New York": "ny-districts.json",
+                "North Carolina": "nc-districts.json",
+                "North Dakota": "nd-districts.json",
+                "Ohio": "oh-districts.json",
+                "Oklahoma": "ok-districts.json",
+                "Oregon": "or-districts.json",
+                "Pennsylvania": "pa-districts.json",
+                "Rhode Island": "ri-districts.json",
+                "South Carolina": "sc-districts.json",
+                "South Dakota": "sd-districts.json",
+                "Tennessee": "tn-districts.json",
+                "Texas": "tx-districts.json",
+                "Utah": "ut-districts.json",
+                "Vermont": "vt-districts.json",
+                "Virginia": "va-districts.json",
+                "Washington": "wa-districts.json",
+                "West Virginia": "wv-districts.json",
+                "Wisconsin": "wi-districts.json",
+                "Wyoming": "wy-districts.json",
+            };
+            const districtsCache = {};
+
+            function loadDistricts(stateName) {
+                if (districtsCache[stateName] !== undefined) {
+                    return Promise.resolve(districtsCache[stateName]);
+                }
+                const file = STATE_DISTRICT_FILES[stateName];
+                if (!file) {
+                    districtsCache[stateName] = null;
+                    return Promise.resolve(null);
+                }
+                return d3.json(file).then((topology) => {
+                    const layerKey = Object.keys(topology.objects)[0];
+                    const features = topojson.feature(
+                        topology, topology.objects[layerKey]
+                    ).features;
+                    districtsCache[stateName] = features;
+                    return features;
+                });
+            }
+
+            // Build a projection scoped to a state — same params as buildStatePath
+            // so districts overlay perfectly on top of the morphed state shape.
+            // Alaska's Aleutian chain crosses the antimeridian, so geoIdentity
+            // sees a ~360° lon span and crushes the mainland; use the same
+            // rotated conic projection the continental view uses. Same for Hawaii.
+            function buildStateProjection(feature) {
+                const name = feature.properties.name;
+                const extent = [[width * 0.04, height * 0.08], [width * 0.76, height * 0.92]];
+                if (name === "Alaska") {
+                    return d3.geoConicEqualArea()
+                        .rotate([154, 0])
+                        .center([-2, 58.5])
+                        .parallels([55, 65])
+                        .fitExtent(extent, feature);
+                }
+                if (name === "Hawaii") {
+                    return d3.geoConicEqualArea()
+                        .rotate([157, 0])
+                        .center([-3, 19.9])
+                        .parallels([8, 18])
+                        .fitExtent(extent, feature);
+                }
+                return d3.geoIdentity()
+                    .reflectY(true)
+                    .fitExtent(extent, feature);
+            }
+
+            const crumbRoot = document.getElementById("crumb-root");
+
+            crumbRoot.addEventListener("click", function () {
+                if (crumbRoot.classList.contains("is-clickable")) {
+                    window.resetMap();
+                }
+            });
+
+            const crumbRootHint = document.getElementById("crumb-root-hint");
+            const crumbSep1 = document.getElementById("crumb-sep-1");
+            const crumbStateWrap = document.getElementById("crumb-state");
+            const crumbStateName = document.getElementById("crumb-state-name");
+            const crumbStateHint = document.getElementById("crumb-state-hint");
+            const crumbSep2 = document.getElementById("crumb-sep-2");
+            const crumbDistrict = document.getElementById("crumb-district");
+            const crumbDistrictWrap = document.getElementById("crumb-district-wrap");
+            const crumbDistrictHint = document.getElementById("crumb-district-hint");
+            const crumbSep3 = document.getElementById("crumb-sep-3");
+            const crumbCandidate = document.getElementById("crumb-candidate");
+            const statsHeader = document.getElementById("stats-header");
+            const mapContainer = document.querySelector(".map-container");
+            const elStatCandidates = document.getElementById("stat-candidates");
+            const elStatRaces = document.getElementById("stat-races");
+            const candidateListEl = document.getElementById("candidate-list");
+            const elDstatCandidates = document.getElementById("dstat-candidates");
+            const elDstatMoney = document.getElementById("dstat-money");
+            const elDstatBackers = document.getElementById("dstat-backers");
+            const elDstatSigners = document.getElementById("dstat-signers");
+            const elCdName = document.getElementById("cd-name");
+            const elCdParty = document.getElementById("cd-party");
+            const elCdIncumbent = document.getElementById("cd-incumbent");
+            const elCdDistrict = document.getElementById("cd-district");
+            const elCdPartyFull = document.getElementById("cd-party-full");
+            const elCdFiled = document.getElementById("cd-filed");
+            const elCdFecLink = document.getElementById("cd-fec-link");
+            const elCdBioField = document.getElementById("cd-bio-field");
+            const elCdBioLink = document.getElementById("cd-bio-link");
+            const elCdBackBtn = document.getElementById("cd-back-btn");
+            const elCdStatMoney = document.getElementById("cd-stat-money");
+            const elCdStatBackers = document.getElementById("cd-stat-backers");
+            const mobileStateListEl = document.getElementById("mobile-state-list");
+            const mobileDistrictListEl = document.getElementById("mobile-district-list");
+            const zipInput = document.getElementById("zip-input");
+            const zipSubmit = document.getElementById("zip-submit");
+            const zipMessage = document.getElementById("zip-message");
+            const zipOptions = document.getElementById("zip-options");
+
+            // FIPS (first 2 chars of a geoid) → full state name. Used for ZIP
+            // lookup navigation. Inlined (vs derived from STATE_ABBR_BY_NAME) to
+            // avoid a temporal-dead-zone reference; this code lives above where
+            // the abbr map is declared.
+            const FIPS_TO_NAME = {
+                "01":"Alabama","02":"Alaska","04":"Arizona","05":"Arkansas","06":"California",
+                "08":"Colorado","09":"Connecticut","10":"Delaware","12":"Florida","13":"Georgia",
+                "15":"Hawaii","16":"Idaho","17":"Illinois","18":"Indiana","19":"Iowa",
+                "20":"Kansas","21":"Kentucky","22":"Louisiana","23":"Maine","24":"Maryland",
+                "25":"Massachusetts","26":"Michigan","27":"Minnesota","28":"Mississippi","29":"Missouri",
+                "30":"Montana","31":"Nebraska","32":"Nevada","33":"New Hampshire","34":"New Jersey",
+                "35":"New Mexico","36":"New York","37":"North Carolina","38":"North Dakota","39":"Ohio",
+                "40":"Oklahoma","41":"Oregon","42":"Pennsylvania","44":"Rhode Island","45":"South Carolina",
+                "46":"South Dakota","47":"Tennessee","48":"Texas","49":"Utah","50":"Vermont",
+                "51":"Virginia","53":"Washington","54":"West Virginia","55":"Wisconsin","56":"Wyoming",
+            };
+
+            // 4-level breadcrumb + stats header. Level is implied by which args are set.
+            //   setView(null, null)                                    -> top (US)
+            //   setView("Tennessee", null)                             -> state
+            //   setView("Tennessee", "District 6", "4706")             -> district
+            //   setView("Tennessee", "District 6", "4706", { fec_id, name }) -> candidate
+            function setView(stateName, districtName, geoid, candidate) {
+                // data-view drives mobile-only CSS (picker lists visibility).
+                // is-district-view / is-candidate-view classes drive desktop
+                // panel-width transitions and are managed elsewhere — leave alone.
+                const viewName = !stateName ? "us" : !districtName ? "state" : !candidate ? "district" : "candidate";
+                mapContainer.setAttribute("data-view", viewName);
+                // Candidate view is the only level that needs is-candidate-view;
+                // all others clear it. (is-district-view is managed by districtClicked.)
+                if (!candidate) {
+                    mapContainer.classList.remove("is-candidate-view");
+                }
+                if (!stateName) {
+                    // Top level
+                    crumbRoot.classList.remove("is-clickable");
+                    crumbRootHint.hidden = true;
+                    crumbSep1.hidden = true;
+                    crumbStateWrap.hidden = true;
+                    crumbStateWrap.classList.remove("is-clickable");
+                    crumbStateName.textContent = "";
+                    crumbStateHint.hidden = true;
+                    crumbSep2.hidden = true;
+                    crumbDistrictWrap.hidden = true;
+                    crumbDistrictWrap.classList.remove("is-clickable");
+                    crumbDistrict.textContent = "";
+                    crumbDistrictHint.hidden = true;
+                    crumbSep3.hidden = true;
+                    crumbCandidate.hidden = true;
+                    crumbCandidate.textContent = "";
+                    statsHeader.textContent = "United States";
+                    paintStats(CANDIDATES.us);
+                    return;
+                }
+
+                // At least state level
+                crumbRoot.classList.add("is-clickable");
+                crumbSep1.hidden = false;
+                crumbStateWrap.hidden = false;
+                crumbStateName.textContent = stateName;
+
+                if (!districtName) {
+                    // State level: state crumb is current (amber), back hint under root
+                    crumbStateWrap.classList.remove("is-clickable");
+                    crumbStateHint.hidden = true;
+                    crumbSep2.hidden = true;
+                    crumbDistrictWrap.hidden = true;
+                    crumbDistrictWrap.classList.remove("is-clickable");
+                    crumbDistrict.textContent = "";
+                    crumbDistrictHint.hidden = true;
+                    crumbSep3.hidden = true;
+                    crumbCandidate.hidden = true;
+                    crumbCandidate.textContent = "";
+                    crumbRootHint.hidden = false;
+                    statsHeader.textContent = stateName;
+                    const abbr = STATE_ABBR_BY_NAME[stateName];
+                    paintStats(abbr ? CANDIDATES.byState[abbr] : null);
+                } else if (!candidate) {
+                    // District level: state crumb becomes clickable, district crumb is current
+                    crumbStateWrap.classList.add("is-clickable");
+                    crumbStateHint.hidden = false;
+                    crumbStateHint.textContent = "← Back to " + stateName;
+                    crumbSep2.hidden = false;
+                    crumbDistrictWrap.hidden = false;
+                    crumbDistrictWrap.classList.remove("is-clickable");
+                    crumbDistrict.textContent = districtName;
+                    crumbDistrictHint.hidden = true;
+                    crumbSep3.hidden = true;
+                    crumbCandidate.hidden = true;
+                    crumbCandidate.textContent = "";
+                    crumbRootHint.hidden = true;
+                    statsHeader.textContent = stateName + " " + districtName;
+                    if (geoid) paintCandidates(geoid);
+                } else {
+                    // Candidate level: district crumb becomes clickable, candidate crumb is current
+                    crumbStateWrap.classList.add("is-clickable");
+                    crumbStateHint.hidden = true; // hint moves under district instead
+                    crumbSep2.hidden = false;
+                    crumbDistrictWrap.hidden = false;
+                    crumbDistrictWrap.classList.add("is-clickable");
+                    crumbDistrict.textContent = districtName;
+                    crumbDistrictHint.hidden = false;
+                    crumbDistrictHint.textContent = "← Back to " + districtName;
+                    crumbSep3.hidden = false;
+                    crumbCandidate.hidden = false;
+                    crumbCandidate.textContent = candidate.name;
+                    crumbRootHint.hidden = true;
+                    statsHeader.textContent = stateName + " " + districtName;
+                    mapContainer.classList.add("is-candidate-view");
+                    paintCandidateDetail(geoid, candidate.fec_id);
+                }
+            }
+
+            crumbStateWrap.addEventListener("click", function () {
+                if (crumbStateWrap.classList.contains("is-clickable")) {
+                    activeCandidate = null;
+                    window.resetToState();
+                }
+            });
+
+            // Crumb-district is clickable only while at candidate view; clicking
+            // it returns to the candidate-list for the same district.
+            crumbDistrictWrap.addEventListener("click", function () {
+                if (!crumbDistrictWrap.classList.contains("is-clickable")) return;
+                if (!activeState || !activeDistrict) return;
+                activeCandidate = null;
+                setView(
+                    activeState.properties.name,
+                    shortDistrictName(activeDistrict.properties.name),
+                    activeDistrict.properties.geoid
+                );
+            });
+
+            // Click delegation: any candidate row enters candidate detail view.
+            candidateListEl.addEventListener("click", function (e) {
+                const row = e.target.closest(".candidate-row");
+                if (!row || !row.dataset.fecId || !activeDistrict) return;
+                const list = CANDIDATES.byGeoid[activeDistrict.properties.geoid] || [];
+                const c = list.find((x) => x.fec_id === row.dataset.fecId);
+                if (!c) return;
+                activeCandidate = { geoid: activeDistrict.properties.geoid, fec_id: c.fec_id };
+                setView(
+                    activeState.properties.name,
+                    shortDistrictName(activeDistrict.properties.name),
+                    activeDistrict.properties.geoid,
+                    c
+                );
+            });
+
+            // Back-this-candidate button — stub until the Supabase pipeline lands.
+            elCdBackBtn.addEventListener("click", function () {
+                console.log("[force.vote] back candidate (stub):", activeCandidate);
+            });
+
+            function shortDistrictName(fullName) {
+                // "Congressional District 6" -> "District 6"
+                return (fullName || "").replace(/^Congressional\s+/i, "");
+            }
+
+            // Build a path for a single state, naturally oriented (north-up, no
+            // continental tilt) and fitted to the left ~78% of the SVG so the
+            // right ~20% stays clear for the stats panel.
+            function buildStatePath(feature) {
+                return d3.geoPath(buildStateProjection(feature))(feature);
+            }
+
+            // District-view projection: panel doubles in width, so the map
+            // area shrinks to the left ~58% of the SVG.
+            function buildDistrictProjection(feature) {
+                return d3.geoIdentity()
+                    .reflectY(true)
+                    .fitExtent(
+                        [[width * 0.04, height * 0.08], [width * 0.56, height * 0.92]],
+                        feature
+                    );
+            }
+
+            function buildDistrictPathString(feature) {
+                return d3.geoPath(buildDistrictProjection(feature))(feature);
+            }
+
+            function showDistricts(stateFeature, districtFeatures) {
+                paintDistrictList(districtFeatures);
+                const path2 = d3.geoPath(buildStateProjection(stateFeature));
+                districtsLayer.selectAll("path")
+                    .data(districtFeatures, (d) => d.properties.geoid || d.properties.name)
+                    .join("path")
+                    .attr("class", "district")
+                    .attr("d", path2)
+                    .attr("data-name", (d) => d.properties.name)
+                    .attr("data-geoid", (d) => d.properties.geoid)
+                    .style("opacity", 0)
+                    .each(function (d) {
+                        const sel = d3.select(this);
+                        if (sel.select("title").empty()) {
+                            sel.append("title").text(d.properties.name);
+                        }
+                    })
+                    .on("click", districtClicked)
+                    .transition("fade")
+                    .delay(550)
+                    .duration(300)
+                    .style("opacity", 1);
+            }
+
+            function districtClicked(event, d) {
+                event.stopPropagation();
+
+                if (activeDistrict === d) {
+                    window.resetToState();
+                    return;
+                }
+
+                const previousDistrict = activeDistrict;
+                activeDistrict = d;
+
+                mapContainer.classList.add("is-district-view");
+
+                // Hide the entire states layer
+                g.style("pointer-events", "none");
+                g.transition()
+                    .duration(600)
+                    .style("opacity", 0)
+                    .on("end", function () {
+                        if (activeDistrict) {
+                            d3.select(this).style("display", "none");
+                        }
+                    });
+
+                // Restore previous district to state-view fit if switching
+                if (previousDistrict && activeState) {
+                    const prevSelector =
+                        `.district[data-name="${previousDistrict.properties.name}"]`;
+                    const prevNode = document.querySelector(prevSelector);
+                    if (prevNode) {
+                        const statePath = d3.geoPath(buildStateProjection(activeState));
+                        morphPath(prevNode, statePath(previousDistrict), 750);
+                    }
+                }
+
+                const clickedNode = this;
+
+                // Fade other districts via inline-style d3 transitions, since
+                // showDistricts established inline opacity that would override
+                // any CSS class.
+                d3.selectAll(".district")
+                    .interrupt("fade")
+                    .transition("fade")
+                    .duration(220)
+                    .style("opacity", function () {
+                        return this === clickedNode ? 1 : 0;
+                    });
+                d3.selectAll(".district").each(function () {
+                    d3.select(this).style(
+                        "pointer-events",
+                        this === clickedNode ? null : "none"
+                    );
+                });
+
+                morphPath(clickedNode, buildDistrictPathString(d), 750);
+
+                setView(activeState.properties.name, shortDistrictName(d.properties.name), d.properties.geoid);
+            }
+
+            window.resetToState = function () {
+                if (!activeDistrict || !activeState) return;
+
+                const districtName = activeDistrict.properties.name;
+                const districtNode = document.querySelector(
+                    `.district[data-name="${districtName}"]`
+                );
+                if (districtNode) {
+                    const statePath = d3.geoPath(buildStateProjection(activeState));
+                    morphPath(districtNode, statePath(activeDistrict), 750);
+                }
+
+                activeDistrict = null;
+                mapContainer.classList.remove("is-district-view");
+
+                // Bring the states layer back into view (clear display:none first)
+                g.style("display", null).style("opacity", 0);
+                g.transition().duration(600).style("opacity", 1);
+                g.style("pointer-events", null);
+
+                // Unfade all districts via inline-style transition
+                d3.selectAll(".district")
+                    .interrupt("fade")
+                    .style("pointer-events", null)
+                    .transition("fade")
+                    .duration(400)
+                    .style("opacity", 1);
+
+                // Unfade only the active state (others stay faded since we're
+                // still in state view)
+                const stateName = activeState.properties.name;
+                d3.selectAll(".state").classed("faded", function () {
+                    return this.getAttribute("data-name") !== stateName;
+                });
+
+                setView(activeState.properties.name, null);
+            };
+
+            function hideDistricts() {
+                districtsLayer.selectAll("path")
+                    .interrupt()
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0)
+                    .remove();
+            }
+
+            // Smoothly interpolate a path's `d` attribute between two shapes.
+            // Works because the same feature drawn with two projections yields
+            // path strings with identical command structure — only the numbers differ.
+            function morphPath(node, toD, duration) {
+                const fromD = node.getAttribute("d");
+                d3.select(node)
+                    .transition()
+                    .duration(duration)
+                    .attrTween("d", function () {
+                        return d3.interpolateString(fromD, toD);
+                    });
+            }
+
+            // Candidate data — geoid -> [candidate, ...], plus precomputed
+            // aggregates at US and per-state levels for the stats panel.
+            const CANDIDATES = { byGeoid: {}, us: null, byState: {} };
+
+            function buildCandidateAggregates(byGeoid) {
+                const us = { candidates: 0, races: 0, incumbents: 0, openSeats: 0 };
+                const byState = {};
+                for (const [, list] of Object.entries(byGeoid)) {
+                    const state = list[0] && list[0].state;
+                    if (!state) continue;
+                    const incs = list.filter((c) => c.incumbent).length;
+                    us.candidates += list.length;
+                    us.races += 1;
+                    us.incumbents += incs > 0 ? 1 : 0;
+                    if (incs === 0) us.openSeats += 1;
+                    const s = (byState[state] ||= { candidates: 0, races: 0, incumbents: 0, openSeats: 0 });
+                    s.candidates += list.length;
+                    s.races += 1;
+                    s.incumbents += incs > 0 ? 1 : 0;
+                    if (incs === 0) s.openSeats += 1;
+                }
+                return { us, byState };
+            }
+
+            // Full state name -> 2-letter abbr (for joining to candidate data,
+            // which is keyed by state abbr).
+            const STATE_ABBR_BY_NAME = {
+                "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
+                "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
+                "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA",
+                "Kansas":"KS","Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD",
+                "Massachusetts":"MA","Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO",
+                "Montana":"MT","Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ",
+                "New Mexico":"NM","New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH",
+                "Oklahoma":"OK","Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+                "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
+                "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
+            };
+
+            function fmtNum(n) {
+                return (n || 0).toLocaleString("en-US");
+            }
+
+            // Populate the stats-list with totals for the given scope.
+            // scope: { candidates, races, ... } or null
+            function paintStats(scope) {
+                if (!scope) {
+                    elStatCandidates.textContent = "0";
+                    elStatRaces.textContent = "0";
+                    return;
+                }
+                elStatCandidates.textContent = fmtNum(scope.candidates);
+                elStatRaces.textContent = fmtNum(scope.races);
+            }
+
+            // Render the candidate list for a single district + populate the
+            // 4-stat header above it (candidates / $ backed / backers / signers).
+            function paintCandidates(geoid) {
+                const list = CANDIDATES.byGeoid[geoid] || [];
+                // Mini-stats: real candidate count, rest are 0 placeholders until
+                // the Supabase backing/signing pipeline lands.
+                elDstatCandidates.textContent = fmtNum(list.length);
+                elDstatMoney.textContent = "$0";
+                elDstatBackers.textContent = "0";
+                elDstatSigners.textContent = String(list.filter((c) => c.status === "signed").length);
+                if (!list.length) {
+                    candidateListEl.innerHTML =
+                        '<div class="candidate-row"><div class="candidate-name">No candidates filed yet</div></div>';
+                    return;
+                }
+                const rows = list.map((c) => {
+                    const party = (c.party || "other").toUpperCase();
+                    const partyLetter = party === "DEM" ? "D" : party === "REP" ? "R" : party.charAt(0);
+                    const incBadge = c.incumbent
+                        ? '<span class="candidate-incumbent-badge">Incumbent</span>'
+                        : "";
+                    return (
+                        '<div class="candidate-row' + (c.incumbent ? " is-incumbent" : "") +
+                            '" data-fec-id="' + c.fec_id + '">' +
+                            '<div class="candidate-name">' + c.name + incBadge + '</div>' +
+                            '<div class="candidate-party party-' + party + '">' + partyLetter + '</div>' +
+                            '<div class="candidate-status">No Response</div>' +
+                        '</div>'
+                    );
+                });
+                candidateListEl.innerHTML = rows.join("");
+            }
+
+            // ---- Mobile pickers (state list at US view, district list at state view) ----
+            // We never hand-build a separate navigation path — rows dispatch a
+            // synthetic click on the corresponding SVG path so all existing morph,
+            // load-districts, and setView logic runs. The SVG is hidden via CSS at
+            // mobile breakpoint, but click handlers still fire on hidden elements.
+
+            // Populate the state picker once. Each row shows state name + race count.
+            // The list is collapsed by default behind a "United States +" toggle —
+            // exposing 50 state rows up-front made scrolling past it tedious for
+            // readers who weren't drilling in.
+            function paintStateList(features) {
+                const sorted = features
+                    .filter((f) => STATE_ABBR_BY_NAME[f.properties.name])
+                    .slice()
+                    .sort((a, b) => a.properties.name.localeCompare(b.properties.name));
+                const totalRaces = CANDIDATES.us ? CANDIDATES.us.races : "";
+                const totalMeta = totalRaces ? totalRaces + " races" : "";
+                const toggleRow =
+                    '<div class="picker-row picker-toggle" id="mobile-state-toggle">' +
+                        '<div class="picker-name">United States</div>' +
+                        '<div class="picker-meta">' + totalMeta + '</div>' +
+                        '<div class="picker-chevron toggle-icon">+</div>' +
+                    '</div>';
+                const stateRows = sorted.map((f) => {
+                    const abbr = STATE_ABBR_BY_NAME[f.properties.name];
+                    const stateAgg = CANDIDATES.byState[abbr];
+                    const meta = stateAgg
+                        ? stateAgg.races + (stateAgg.races === 1 ? " race" : " races")
+                        : "";
+                    return (
+                        '<div class="picker-row" data-state-name="' + f.properties.name + '">' +
+                            '<div class="picker-name">' + f.properties.name + '</div>' +
+                            '<div class="picker-meta">' + meta + '</div>' +
+                            '<div class="picker-chevron">›</div>' +
+                        '</div>'
+                    );
+                }).join("");
+                mobileStateListEl.innerHTML = toggleRow + stateRows;
+            }
+
+            // Populate the district picker each time a state is entered. Each row
+            // shows the short district name + candidate count + incumbent name.
+            function paintDistrictList(districtFeatures) {
+                const sorted = districtFeatures.slice().sort((a, b) =>
+                    (a.properties.district || "").localeCompare(b.properties.district || "")
+                );
+                mobileDistrictListEl.innerHTML = sorted.map((f) => {
+                    const geoid = f.properties.geoid;
+                    const list = CANDIDATES.byGeoid[geoid] || [];
+                    const inc = list.find((c) => c.incumbent);
+                    const short = shortDistrictName(f.properties.name);
+                    const meta = list.length + (list.length === 1 ? " candidate" : " candidates");
+                    const incLine = inc ? '<div class="picker-incumbent">' + inc.name + '</div>' : '';
+                    return (
+                        '<div class="picker-row" data-geoid="' + geoid + '">' +
+                            '<div class="picker-name">' + short + incLine + '</div>' +
+                            '<div class="picker-meta">' + meta + '</div>' +
+                            '<div class="picker-chevron">›</div>' +
+                        '</div>'
+                    );
+                }).join("");
+            }
+
+            // State row tap → either toggle the list (on the "United States +" header)
+            // or dispatch click on the corresponding SVG state path.
+            mobileStateListEl.addEventListener("click", function (e) {
+                const row = e.target.closest(".picker-row");
+                if (!row) return;
+                if (row.classList.contains("picker-toggle")) {
+                    const expanded = mobileStateListEl.classList.toggle("is-expanded");
+                    const icon = row.querySelector(".toggle-icon");
+                    if (icon) icon.textContent = expanded ? "−" : "+";
+                    return;
+                }
+                const name = row.dataset.stateName;
+                const node = document.querySelector('.state[data-name="' + name + '"]');
+                if (node) node.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+            });
+
+            // District row tap → dispatch click on the corresponding SVG district path.
+            mobileDistrictListEl.addEventListener("click", function (e) {
+                const row = e.target.closest(".picker-row");
+                if (!row) return;
+                const geoid = row.dataset.geoid;
+                const node = document.querySelector('.district[data-geoid="' + geoid + '"]');
+                if (node) node.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+            });
+
+            // ---- ZIP code lookup (lazy-loaded, 600KB) ----
+            let zipLookup = null;
+            let zipLookupPromise = null;
+            function ensureZipLookup() {
+                if (zipLookup) return Promise.resolve(zipLookup);
+                if (zipLookupPromise) return zipLookupPromise;
+                zipLookupPromise = fetch("zip-to-district.json")
+                    .then((r) => r.ok ? r.json() : null)
+                    .then((j) => { zipLookup = j ? j.zips : {}; return zipLookup; })
+                    .catch(() => { zipLookup = {}; return zipLookup; });
+                return zipLookupPromise;
+            }
+            zipInput.addEventListener("focus", ensureZipLookup, { once: true });
+
+            function setZipMessage(text, isError) {
+                if (!text) { zipMessage.hidden = true; zipMessage.textContent = ""; return; }
+                zipMessage.hidden = false;
+                zipMessage.textContent = text;
+                zipMessage.classList.toggle("is-error", !!isError);
+            }
+
+            // Walk through state→district click flow programmatically. Reuses the
+            // existing SVG path click handlers (which fire even when the SVG is
+            // display:none on mobile) so navigation logic stays in one place.
+            async function navigateToGeoid(geoid) {
+                const fips = geoid.slice(0, 2);
+                const stateName = FIPS_TO_NAME[fips];
+                if (!stateName) return false;
+                const stateNode = document.querySelector('.state[data-name="' + CSS.escape(stateName) + '"]');
+                if (!stateNode) return false;
+                // Trigger state click (load districts + morph)
+                stateNode.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+                // Poll for the district SVG to appear; loadDistricts fetch + render is async
+                const selector = '.district[data-geoid="' + geoid + '"]';
+                const deadline = Date.now() + 6000;
+                let districtNode = null;
+                while (Date.now() < deadline) {
+                    districtNode = document.querySelector(selector);
+                    if (districtNode) break;
+                    await new Promise((r) => setTimeout(r, 100));
+                }
+                if (!districtNode) return false;
+                // Give morph + fade transitions a beat to settle so the district click
+                // doesn't fire mid-transition
+                await new Promise((r) => setTimeout(r, 200));
+                districtNode.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+                return true;
+            }
+
+            function handleZipSubmit() {
+                const raw = (zipInput.value || "").trim();
+                if (!/^\d{5}$/.test(raw)) {
+                    setZipMessage("Enter a 5-digit ZIP code.", true);
+                    zipOptions.hidden = true;
+                    return;
+                }
+                ensureZipLookup().then((map) => {
+                    const matches = map[raw];
+                    if (!matches || matches.length === 0) {
+                        setZipMessage("ZIP not found — your district may be in a state whose lines changed between cycles, or it's a non-residential ZIP.", true);
+                        zipOptions.hidden = true;
+                        return;
+                    }
+                    if (matches.length === 1) {
+                        setZipMessage("Loading…");
+                        zipOptions.hidden = true;
+                        navigateToGeoid(matches[0]).then((ok) => {
+                            setZipMessage(ok ? "" : "Couldn't navigate to that district.", !ok);
+                        });
+                        return;
+                    }
+                    // Multi-district ZIP: show a small picker
+                    setZipMessage("This ZIP spans " + matches.length + " districts — pick yours:");
+                    zipOptions.hidden = false;
+                    zipOptions.innerHTML = matches.map((g) => {
+                        const fips = g.slice(0, 2);
+                        const dist = g.slice(2);
+                        const name = FIPS_TO_NAME[fips] || fips;
+                        const label = name + " District " + parseInt(dist, 10);
+                        return '<button type="button" class="zip-option" data-geoid="' + g + '">' + label + '</button>';
+                    }).join("");
+                });
+            }
+
+            zipSubmit.addEventListener("click", handleZipSubmit);
+            zipInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") { e.preventDefault(); handleZipSubmit(); }
+            });
+            zipOptions.addEventListener("click", (e) => {
+                const btn = e.target.closest(".zip-option");
+                if (!btn) return;
+                setZipMessage("Loading…");
+                zipOptions.hidden = true;
+                navigateToGeoid(btn.dataset.geoid).then((ok) => {
+                    setZipMessage(ok ? "" : "Couldn't navigate to that district.", !ok);
+                });
+            });
+
+            // Track which candidate (by FEC ID) and district we're viewing in detail.
+            let activeCandidate = null; // { geoid, fec_id }
+
+            // Fill the candidate-detail panel from candidates.json data.
+            function paintCandidateDetail(geoid, fecId) {
+                const list = CANDIDATES.byGeoid[geoid] || [];
+                const c = list.find((x) => x.fec_id === fecId);
+                if (!c) return;
+                elCdName.textContent = c.name;
+                const party = (c.party || "other").toUpperCase();
+                const partyLetter = party === "DEM" ? "D" : party === "REP" ? "R" : party.charAt(0);
+                elCdParty.textContent = partyLetter;
+                elCdParty.className = "candidate-party party-" + party;
+                elCdIncumbent.hidden = !c.incumbent;
+                elCdDistrict.textContent = c.state + "-" + c.district;
+                elCdPartyFull.textContent = c.party_full || "—";
+                elCdFiled.textContent = c.first_file_date || "—";
+                elCdFecLink.href = "https://www.fec.gov/data/candidate/" + c.fec_id + "/?cycle=" + (CANDIDATES.electionYear || 2026);
+                if (c.bioguide) {
+                    elCdBioField.hidden = false;
+                    elCdBioLink.href = "https://bioguide.congress.gov/search/bio/" + c.bioguide;
+                } else {
+                    elCdBioField.hidden = true;
+                }
+                // Per-candidate backing stats — placeholders until backend lands.
+                elCdStatMoney.textContent = "$" + fmtNum(c.backed_amount || 0);
+                elCdStatBackers.textContent = fmtNum(c.backer_count || 0);
+            }
+
+            console.log("[map] fetching states-10m.json + candidates.json…");
+            Promise.all([
+                d3.json("states-10m.json"),
+                d3.json("candidates.json").catch(() => null),
+            ])
+                .then(([us, candData]) => {
+                    if (candData && candData.candidates) {
+                        CANDIDATES.byGeoid = candData.candidates;
+                        const aggs = buildCandidateAggregates(candData.candidates);
+                        CANDIDATES.us = aggs.us;
+                        CANDIDATES.byState = aggs.byState;
+                    }
+                    // Initialize panel state for top-level view (data-view="us",
+                    // populated stats, hidden state-level crumbs).
+                    setView(null, null);
+                    return us;
+                })
+                .then((us) => {
+                    console.log("[map] data loaded. objects:", Object.keys(us.objects));
+                    const states = topojson.feature(us, us.objects.states);
+                    console.log("[map] features:", states.features.length);
+
+                    // Custom composite projection: lower 48 fills the available
+                    // space, Alaska and Hawaii are positioned manually as insets.
+                    // (d3.geoAlbersUsa hardcodes AK/HI offsets that force a lot of
+                    // empty space off the California coast.)
+                    const territoryNames = new Set([
+                        "American Samoa",
+                        "Guam",
+                        "Commonwealth of the Northern Mariana Islands",
+                        "Puerto Rico",
+                        "United States Virgin Islands",
+                    ]);
+                    const lower48Features = states.features.filter((f) =>
+                        f.properties.name !== "Alaska" &&
+                        f.properties.name !== "Hawaii" &&
+                        !territoryNames.has(f.properties.name)
+                    );
+                    const alaskaFeature = states.features.find(
+                        (f) => f.properties.name === "Alaska"
+                    );
+                    const hawaiiFeature = states.features.find(
+                        (f) => f.properties.name === "Hawaii"
+                    );
+
+                    const lower48Collection = {
+                        type: "FeatureCollection",
+                        features: lower48Features,
+                    };
+
+                    // Main projection: lower 48 only — free to expand left.
+                    const mainProjection = d3.geoAlbers()
+                        .fitExtent([[0, 0], [width * 0.78, height]], lower48Collection);
+                    const mainPath = d3.geoPath(mainProjection);
+
+                    // Alaska inset: bottom-left, tucked into the empty SW corner.
+                    const alaskaProjection = d3.geoConicEqualArea()
+                        .rotate([154, 0])
+                        .center([-2, 58.5])
+                        .parallels([55, 65]);
+                    if (alaskaFeature) {
+                        alaskaProjection.fitExtent(
+                            [[width * 0.04, height * 0.66], [width * 0.20, height * 0.97]],
+                            alaskaFeature
+                        );
+                    }
+                    const alaskaPath = d3.geoPath(alaskaProjection);
+
+                    // Hawaii inset: smaller, just to the right of Alaska.
+                    const hawaiiProjection = d3.geoConicEqualArea()
+                        .rotate([157, 0])
+                        .center([-3, 19.9])
+                        .parallels([8, 18]);
+                    if (hawaiiFeature) {
+                        hawaiiProjection.fitExtent(
+                            [[width * 0.22, height * 0.83], [width * 0.32, height * 0.97]],
+                            hawaiiFeature
+                        );
+                    }
+                    const hawaiiPath = d3.geoPath(hawaiiProjection);
+
+                    // Composite path function: pick the right projection per feature.
+                    path = function (feature) {
+                        if (!feature) return "";
+                        const name = feature.properties.name;
+                        if (name === "Alaska") return alaskaPath(feature);
+                        if (name === "Hawaii") return hawaiiPath(feature);
+                        if (territoryNames.has(name)) return ""; // hide for now
+                        return mainPath(feature);
+                    };
+
+                    g.selectAll("path")
+                        .data(states.features)
+                        .join("path")
+                        .attr("class", "state")
+                        .attr("d", path)
+                        .attr("data-id", (d) => d.id)
+                        .attr("data-name", (d) => d.properties.name)
+                        .on("click", clicked)
+                        .append("title")
+                        .text((d) => d.properties.name);
+                    paintStateList(states.features);
+                    console.log("[map] rendered.");
+                })
+                .catch((err) => {
+                    document.querySelector(".map-container").innerHTML =
+                        '<div class="map-loading">Map data failed to load: ' + err.message + '</div>';
+                    console.error("[map] error:", err);
+                });
+
+            function clicked(event, d) {
+                if (activeState === d) {
+                    resetMap();
+                    return;
+                }
+
+                // If switching from one state to another, restore the previous one
+                const previousActive = activeState;
+                activeState = d;
+
+                if (previousActive) {
+                    const prevNode = document.querySelector(
+                        `.state[data-name="${previousActive.properties.name}"]`
+                    );
+                    if (prevNode) {
+                        morphPath(prevNode, path(previousActive), 750);
+                    }
+                }
+
+                const clickedNode = this;
+                d3.selectAll(".state").classed("faded", function () {
+                    return this !== clickedNode;
+                });
+
+                // Clear any district-view state from the previous state
+                activeDistrict = null;
+                mapContainer.classList.remove("is-district-view");
+
+                // Morph the clicked state to its naturally-oriented, left-anchored shape
+                morphPath(clickedNode, buildStatePath(d), 750);
+
+                // Clear any previous districts, then load + render this state's
+                hideDistricts();
+                loadDistricts(d.properties.name).then((features) => {
+                    if (features && activeState === d) {
+                        showDistricts(d, features);
+                    }
+                });
+
+                setView(d.properties.name, null);
+            }
+
+            window.resetMap = function () {
+                if (!activeState) return;
+
+                // Clear district-view state if any
+                activeDistrict = null;
+                mapContainer.classList.remove("is-district-view");
+
+                // Make sure the states layer is fully visible again
+                g.style("display", null).style("opacity", 1).style("pointer-events", null);
+
+                hideDistricts();
+
+                const stateNode = document.querySelector(
+                    `.state[data-name="${activeState.properties.name}"]`
+                );
+                if (stateNode) {
+                    morphPath(stateNode, path(activeState), 750);
+                }
+
+                activeState = null;
+                d3.selectAll(".state").classed("faded", false);
+
+                setView(null, null);
+            };
+        })();
+    </script>
+</body>
+</html>
